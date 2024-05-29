@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GS Camera Stream</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        img {
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            height: 50%;
+            width: auto;
+        }
+
+        #downloadBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #downloadBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GS Camera Stream</h1>
+    <img src="/stream.mjpg" width="1440" height="1080" alt="Camera Stream" id="cameraStream">
+    <br>
+    <button id="downloadBtn">Download Current Frame</button>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+            fetch('/current_frame.jpg')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `${Math.floor(Date.now() / 1000)}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error downloading the frame:', error));
+        });
+    </script>
+</body>
+
+</html>
